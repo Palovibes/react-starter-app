@@ -1,3 +1,20 @@
 * {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.delete-btn { 
+  font-size: 7px;
+  padding: 5px 5px;
+  margin: 0 2px;
+  background-color:rgb(175, 11, 11);
+  color: white;
+}
+
+.submit-btn { /* Styles for the submit button */
+  background-color: rgb(232, 232, 233);
+  color: black;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
