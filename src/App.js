@@ -10,16 +10,24 @@ export default function App() {
   const [colors, setNewColor] = useState(['yellow', 'blue', 'red']);
   const [userInput, setInput] = useState('');
   const [displayColor, setDisplayColor] = useState('');
-  const [brightness, setBrightness] = useState(100)
   const [rgbColor, setRgbColor] = useState({ r: 255, g: 0, b: 0 }); // Initial color (red)
+  const [displayTimeout, setDisplayTimeout] = useState(null); // Initialize
+
 
 
   // update state variable '[colors]', based on changes to input field 
   const captureInput = (input) => {
     console.log(`Received input: ${input}`)
     setInput(input); //update userInput state to input
+    // Clear any pending timeout to avoid unnecessary updates
     setDisplayColor(input); // try to display color
+
+    // Delay the displayColor update briefly 
+    displayTimeout = setTimeout(() => setDisplayColor(input), 300); // 300ms delay
+    clearTimeout(displayTimeout); //  clear previous timeout
+    setDisplayTimeout(displayTimeout);
   }
+
 
   // DOM handler event 
   const captureEvent = (e) => {
@@ -27,17 +35,12 @@ export default function App() {
   }
 
   const newColorHandler = () => {
-    const adjustedColor = getAdjustedColor(displayColor, brightness); //  calculate adjusted color
+    console.log(displayColor)
+    const adjustedColor = displayColor; // use displayColor
     setNewColor(colors.concat([adjustedColor]));
     setDisplayColor(adjustedColor); // update userInput state to display color changed 
     setInput('');
-    setBrightness(100) // reset brightness
   };
-
-  const getAdjustedColor = (color, brightness) => {
-    const adjusted = tinycolor(color).brighten(brightness - 100);
-    return adjusted.toRgbString();
-  }
 
   // manipulate colors array and update state variable
   const handleDelete = (index) => {
@@ -58,11 +61,17 @@ export default function App() {
           </li>
         )}
       </ul>
-      <input type='text' className='submit-btn' value={userInput} placeholder='type a color' onChange={captureEvent}></input>
+
+      <input type='text' className='submit-btn'
+        value={rgbColor ? `rgb(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b})` : userInput} // Conditional Value
+        placeholder='type a color'
+        onChange={captureEvent}>
+      </input>
+
       <div style={{ backgroundColor: displayColor, width: '50px', height: '50px' }}></div>
-      <button onClick={() => setBrightness(prevBrightness => Math.min(prevBrightness + 10, 150))}>Lighter</button>
-      <button onClick={() => setBrightness(prevBrightness => Math.max(prevBrightness - 10, 50))}>Darker</button>
+
       <button className='submit-btn' onClick={() => { newColorHandler() }}>Add</button>
+
       <SketchPicker
         color={rgbColor}
         onChange={(newColor) => {
@@ -70,6 +79,7 @@ export default function App() {
           setDisplayColor(`rgb(${newColor.rgb.r}, ${newColor.rgb.g}, ${newColor.rgb.b})`);
         }}
       />
+
     </>
 
 
